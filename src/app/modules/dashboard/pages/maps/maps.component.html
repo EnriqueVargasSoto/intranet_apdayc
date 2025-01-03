@@ -1,0 +1,57 @@
+<div class="relative h-screen">
+  <!-- Mapa -->
+  <google-map
+    id="map"
+    [height]="'100%'"
+    [width]="'100%'"
+    [center]="mapCenter"
+    [zoom]="mapZoom"
+  ></google-map>
+
+  <!-- Botón flotante -->
+  <button
+    class="fixed bottom-4 right-4 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700"
+    (click)="toggleDrawer()"
+  >
+    <i class="fas fa-filter"></i> <!-- Ícono (opcional) -->
+  </button>
+
+  <!-- Drawer -->
+  <div
+    id="drawer-filters"
+    class="fixed top-0 right-0 w-80 h-full bg-white shadow-lg transform transition-transform"
+    [ngClass]="{ 'translate-x-0': drawerOpen, 'translate-x-full': !drawerOpen }"
+  >
+    <div class="p-4">
+      <h3 class="text-lg font-bold">Filtros</h3>
+      <form>
+        <div class="mb-4">
+          <label for="filter1" class="block text-sm font-medium text-gray-700">Filtro 1</label>
+          <input
+            type="text"
+            id="filter1"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="filter2" class="block text-sm font-medium text-gray-700">Filtro 2</label>
+          <select
+            id="filter2"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Seleccione</option>
+            <option value="opcion1">Opción 1</option>
+            <option value="opcion2">Opción 2</option>
+          </select>
+        </div>
+        <button
+          type="button"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          (click)="applyFilters()"
+        >
+          Aplicar Filtros
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

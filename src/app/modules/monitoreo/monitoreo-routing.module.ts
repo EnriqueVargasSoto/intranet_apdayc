@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { MonitoreoComponent } from './pages/monitoreo/monitoreo.component';
 import { MapsComponent } from './pages/maps/maps.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent
+    component: MonitoreoComponent
   },
   {
     path: 'maps',
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DashboardRoutingModule { }
+export class MonitoreoRoutingModule { }
