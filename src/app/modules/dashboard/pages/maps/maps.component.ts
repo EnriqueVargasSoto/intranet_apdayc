@@ -11613,9 +11613,12 @@ export class MapsComponent implements OnInit{
         alert(`Has seleccionado: ${cliente.name}`);
       });
     });
+
   }
 
+  obtenerPng(){
 
+  }
 
   toggleDrawer() {
     this.drawerOpen = !this.drawerOpen;
