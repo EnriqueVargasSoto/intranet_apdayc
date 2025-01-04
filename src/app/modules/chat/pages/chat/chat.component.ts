@@ -1,3 +1,4 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 interface Message {
@@ -19,10 +20,16 @@ export class ChatComponent {
 
   conversations: Conversation[] = [
     { name: 'Conversación 1', messages: [{ sender: 'bot', text: 'Hola, ¿cómo puedo ayudarte?' }] },
-    { name: 'Conversación 2', messages: [{ sender: 'bot', text: '¿Tienes alguna consulta?' }] },
+    { name: 'Conversación', messages: [{ sender: 'bot', text: '¿Tienes alguna consulta?' }] },
   ];
   selectedConversation: Conversation | null = null;
   messageText: string = '';
+
+  URL_CHAT: string = 'https://ieyy73j919.execute-api.us-east-2.amazonaws.com/chatbot-api';
+
+  constructor(private http: HttpClient){
+    this.selectConversation({ name: 'Conversación', messages: [{ sender: 'bot', text: '¿Tienes alguna consulta?' }] })
+  }
 
   selectConversation(conversation: Conversation) {
     this.selectedConversation = conversation;
@@ -41,14 +48,31 @@ export class ChatComponent {
     if (!this.messageText.trim() || !this.selectedConversation) return;
 
     this.selectedConversation.messages.push({ sender: 'user', text: this.messageText });
+    const body = {
+      prompt: this.messageText
+    };
+
     this.messageText = '';
 
+    this.http.post(this.URL_CHAT, body, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        //'Authorization': `Bearer ${token}`
+      })}).subscribe((resp: any) => {
+      this.selectedConversation?.messages.push({
+        sender: 'bot',
+        text: resp.response//'Gracias por tu mensaje. Estoy aquí para ayudarte.',
+      });
+    });
+
+
+
     // Simulate bot response
-    setTimeout(() => {
+    /* setTimeout(() => {
       this.selectedConversation?.messages.push({
         sender: 'bot',
         text: 'Gracias por tu mensaje. Estoy aquí para ayudarte.',
       });
-    }, 1000);
+    }, 1000); */
   }
 }

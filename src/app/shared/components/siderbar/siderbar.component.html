@@ -37,23 +37,47 @@
       <ul class="space-y-2">
         <li>
           <a
-            href="#"
+            [routerLink]="['/dashboard']" routerLinkActive="router-link-active"
             class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
           >
-            <svg
-              aria-hidden="true"
-              class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-              <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-            </svg>
-            <span class="ml-3">Overview</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6.025A7.5 7.5 0 1 0 17.975 14H10V6.025Z"/>
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 3c-.169 0-.334.014-.5.025V11h7.975c.011-.166.025-.331.025-.5A7.5 7.5 0 0 0 13.5 3Z"/>
+          </svg>
+
+            <span class="ml-3">Dashboard</span>
           </a>
         </li>
         <li>
+          <a
+            [routerLink]="['/documentos']" routerLinkActive="router-link-active"
+            class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+          </svg>
+
+            <span class="ml-3">Documentos</span>
+          </a>
+        </li>
+        <li>
+          <a
+            [routerLink]="['/chat']" routerLinkActive="router-link-active"
+            class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+          >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24" height="24"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+          </svg>
+
+            <span class="ml-3">Chat</span>
+          </a>
+        </li>
+        <!-- <li>
           <button
             type="button"
             class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
@@ -262,9 +286,9 @@
               >
             </li>
           </ul>
-        </li>
+        </li> -->
       </ul>
-      <ul
+      <!-- <ul
         class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700"
       >
         <li>
@@ -329,7 +353,7 @@
             <span class="ml-3">Help</span>
           </a>
         </li>
-      </ul>
+      </ul> -->
     </div>
 
   </aside>

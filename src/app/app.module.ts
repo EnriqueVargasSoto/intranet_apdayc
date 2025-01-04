@@ -9,6 +9,8 @@ import { SharedModule } from './shared/shared.module';
 
 import { HttpClientModule } from '@angular/common/http';
 
+import { NgApexchartsModule } from "ng-apexcharts";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +22,9 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
 
     SharedModule,
-    HttpClientModule
+    HttpClientModule,
+
+    NgApexchartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

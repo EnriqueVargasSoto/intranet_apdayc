@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MapsComponent } from './pages/maps/maps.component';
 import { GoogleMapsModule } from '@angular/google-maps';
 
+import { NgApexchartsModule } from "ng-apexcharts";
 
 @NgModule({
   declarations: [
@@ -18,7 +19,10 @@ import { GoogleMapsModule } from '@angular/google-maps';
     DashboardRoutingModule,
     FormsModule,
 
-    GoogleMapsModule
+    GoogleMapsModule,
+
+    NgApexchartsModule
+
   ]
 })
 export class DashboardModule { }

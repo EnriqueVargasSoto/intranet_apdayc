@@ -37,7 +37,8 @@
       </button>
       <div class="flex items-center justify-between mr-4">
         <img
-          src="../../../../assets/apdayc-dark.png"
+
+          [src]="currentTheme === 'light' ? '../../../../assets/apdayc-dark.png' : '../../../../assets/apdayc.png'"
           class="mr-3 h-8"
           alt="Flowbite Logo"
         />
@@ -668,6 +669,7 @@
         id="user-menu-button"
         aria-expanded="false"
         data-dropdown-toggle="dropdown"
+        (click)="desplegar()"
       >
         <span class="sr-only">Open user menu</span>
         <img
@@ -793,7 +795,7 @@
         >
           <li>
             <a
-              href="#"
+              (click)="logout()"
               class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >Sign out</a
             >

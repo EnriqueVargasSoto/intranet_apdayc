@@ -1,0 +1,9 @@
+.router-link-active {
+  background-color: #4CAF50; /* Cambia esto a cualquier color de fondo que prefieras */
+  color: white; /* Cambia el color del texto */
+  border-radius: 8px; /* Opcional, para redondear las esquinas */
+}
+
+.router-link-active:hover {
+  background-color: #45a049; /* Cambia este color al color del hover */
+}
