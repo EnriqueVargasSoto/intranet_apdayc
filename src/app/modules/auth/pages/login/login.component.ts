@@ -33,7 +33,7 @@ export class LoginComponent {
         access_token: 'asd123'
       }
       this.authService.login(data);
-      return this.router.navigate(['/dashboard']);
+      return this.router.navigate(['/documentos']);
     }
 
     return

@@ -24,6 +24,7 @@ import {
 
   ApexLegend,
 } from 'ng-apexcharts';
+import { TabItem, Tabs, TabsInterface } from 'flowbite';
 
 
 
@@ -32,19 +33,15 @@ export type ChartOptions = {
   chart: ApexChart;
   responsive: ApexResponsive[];
   labels: any;
+  legend?: ApexLegend; // Añadido para manejar la leyenda
 };
 
 export type ChartOptionsBars3 = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  dataLabels: ApexDataLabels;
-  plotOptions: ApexPlotOptions;
-  yaxis: ApexYAxis;
-  xaxis: ApexXAxis;
-  fill: ApexFill;
-  tooltip: ApexTooltip;
-  stroke: ApexStroke;
-  legend: ApexLegend;
+  series: any[];
+  chart: any;
+  xaxis: any;
+  dataLabels: any;
+  tooltip: any;
 };
 
 @Component({
@@ -65,6 +62,18 @@ export class DashboardComponent {
   search: string = '';
 
   loading: boolean = false;
+
+  totalDocumentosProcesados = 0;
+
+  topsConceptos: any[] = [];
+
+  topsClientes: any[] = [];
+
+  documentosMasEmitidosList: any[] = [];
+  totalDocumentos = 0;
+  leyendaGraficoCirculo: any[] = [];
+  seriesDonus: any[]=[];
+  labelsDonus: string[] = [];
 
   public chartSeries: ApexAxisChartSeries = [
     {
@@ -229,78 +238,58 @@ export class DashboardComponent {
             }
           }
         }
-      ]
+      ],
+      legend: {
+        show: false  // Esto desactiva la visualización de las series al lado del gráfico
+      }
     };
 
     this.chartOptionsBars3 = {
       series: [
         {
-          name: "Net Profit",
-          data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+          name: 'Desktop PC',
+          data: [170, 150, 140, 200, 180]
         },
         {
-          name: "Revenue",
-          data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+          name: 'Phones',
+          data: [120, 100, 130, 180, 150]
         },
         {
-          name: "Free Cash Flow",
-          data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+          name: 'Gaming/Console',
+          data: [220, 180, 210, 230, 200]
         }
       ],
       chart: {
-        type: "bar",
+        type: 'bar',
         height: 350
       },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: "55%",
-          //endingShape: "rounded"
+      xaxis: {
+        categories: ['01 Feb', '02 Feb', '03 Feb', '04 Feb', '05 Feb'],
+        grid:{
+          show: false
         }
       },
       dataLabels: {
         enabled: false
       },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: ["transparent"]
-      },
-      xaxis: {
-        categories: [
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct"
-        ]
-      },
-      yaxis: {
-        title: {
-          text: "$ (thousands)"
-        }
-      },
-      fill: {
-        opacity: 1
-      },
       tooltip: {
-        y: {
-          formatter: function(val) {
-            return "$ " + val + " thousands";
-          }
-        }
-      }
+        shared: true,
+        intersect: false
+      },
+
     };
   }
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
+    this.inicializaTabs();
     this.listarReportes();
+    this.cantidadDocumentosProcesados();
+    this.documentosMasEmitidos();
+    this.totalTiposDocumentos();
+    this.leyendaParaGraficoCirculo();
+    this.llenarGraficoDona();
   }
 
   listarReportes(accion?: string){
@@ -348,6 +337,108 @@ export class DashboardComponent {
       const blob = new Blob([response], { type: 'image/png' });
       const imageUrl = window.URL.createObjectURL(blob);
       window.open(imageUrl, '_blank');
+    });
+  }
+
+  cantidadDocumentosProcesados(){
+
+    const query = {
+      query : "SELECT COUNT(*) AS total_documents FROM documents",
+    };
+
+    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+      console.log('total: ',resp[0][0]);
+      this.totalDocumentosProcesados = resp[0][0];
+    });
+  }
+
+  inicializaTabs(){
+    const tabsElement: HTMLElement = document.getElementById('fullWidthTabContent')!;
+
+    // create an array of objects with the id, trigger element (eg. button), and the content element
+    const tabElements: TabItem[] = [
+      {
+          id: 'faq',
+          triggerEl: document.querySelector('#faq-tab')!,
+          targetEl: document.querySelector('#faq')!,
+      },
+      {
+          id: 'about',
+          triggerEl: document.querySelector('#about-tab')!,
+          targetEl: document.querySelector('#about')!,
+      },
+    ];
+
+    const tabs: TabsInterface = new Tabs(tabsElement, tabElements);
+
+    tabs.show('faq');
+
+    const query = {
+      query : "SELECT item_codigo, item_detalle, COUNT(item_codigo) AS item_count FROM documents GROUP BY item_codigo, item_detalle ORDER BY item_count DESC LIMIT 5",
+    };
+
+    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+      console.log('total: ',resp);
+      this.topsConceptos = resp;
+    });
+
+    const query1 = {
+      query : "SELECT ruc_cliente, usuario, COUNT(*) AS numero_facturas FROM documents GROUP BY ruc_cliente, usuario ORDER BY numero_facturas DESC LIMIT 5;",
+    };
+
+    this.apiService.consulta('consulta-athena','post',query1).then((resp: any) => {
+      console.log('total: ',resp);
+      this.topsClientes = resp;
+    });
+  }
+
+  documentosMasEmitidos(){
+    const query = {
+      query : "SELECT tipo_de_documento, COUNT(*) AS cantidad FROM documents GROUP BY tipo_de_documento ORDER BY cantidad DESC LIMIT 4;",
+    };
+
+    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+      console.log('total: ',resp);
+      this.documentosMasEmitidosList = resp;
+    });
+  }
+
+  totalTiposDocumentos(){
+    const query = {
+      query : "SELECT COUNT(DISTINCT tipo_de_documento) AS total_tipos_documentos FROM documents;",
+    };
+
+    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+      console.log('total: ',resp[0][0]);
+      this.totalDocumentos = resp[0][0];
+    });
+  }
+
+  leyendaParaGraficoCirculo(){
+    const query = {
+      query : "SELECT tipo_de_documento, COUNT(*) AS cantidad FROM documents GROUP BY tipo_de_documento ORDER BY cantidad DESC LIMIT 3;",
+    };
+
+    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+      console.log('total: ',resp);
+      this.leyendaGraficoCirculo = resp;
+    });
+  }
+
+  llenarGraficoDona(){
+    const query = {
+      query : "SELECT tipo_de_documento, COUNT(*) AS cantidad FROM documents GROUP BY tipo_de_documento ORDER BY cantidad DESC;",
+    };
+
+    this.apiService.consulta('consulta-athena','post',query).then((resp: any[]) => {
+      console.log('total: ',resp);
+      resp.forEach(element => {
+        this.labelsDonus.push(element[0]);
+        this.seriesDonus.push(parseInt(element[1]));
+      });
+
+      this.chartOptionsDonus.labels = this.labelsDonus;
+      this.chartOptionsDonus.series = this.seriesDonus;
     });
   }
 }

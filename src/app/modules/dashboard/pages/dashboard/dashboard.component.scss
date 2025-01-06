@@ -2,3 +2,10 @@
   max-width: 100%;
   margin: 0 auto;
 }
+
+.truncate {
+  width: 200px; /* Ajusta el ancho según sea necesario */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el contenido que se desborda */
+  text-overflow: ellipsis; /* Añade los puntos suspensivos */
+}

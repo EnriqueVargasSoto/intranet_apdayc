@@ -8,7 +8,7 @@ import { publicGuard } from './guard/public.guard';
 import { authGuard } from './guard/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' }, // Redirección inicial opcional
+  { path: '', redirectTo: '/documentos', pathMatch: 'full' }, // Redirección inicial opcional
 
   {
     path: '',

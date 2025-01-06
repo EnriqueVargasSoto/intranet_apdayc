@@ -7,7 +7,7 @@ export const publicGuard: CanActivateFn = (route, state) => {
   if (token) {
     // Si el usuario está autenticado, redirigir al dashboard
     const router = inject(Router);
-    router.navigate(['/dashboard']);
+    router.navigate(['/documentos']);
     return false; // No permite acceso al login
   }
 
