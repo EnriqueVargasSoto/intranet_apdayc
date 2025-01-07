@@ -23,6 +23,30 @@
                   <span class="sr-only">Search</span>
               </button>
             </form>
+
+            <div class="relative">
+              <input
+                type="text"
+                [(ngModel)]="query"
+                (input)="listadoRuc()"
+                placeholder="Buscar RUC"
+                class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none"
+              />
+
+              <ul
+                *ngIf="filteredOptions.length > 0"
+                class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-md max-h-40 overflow-auto"
+              >
+                <li
+                  *ngFor="let option of filteredOptions"
+                  (click)="selectOption(option)"
+                  class="px-4 py-2 cursor-pointer hover:bg-blue-100"
+                >
+                  {{ option }}
+                </li>
+              </ul>
+            </div>
+
           </div>
       </div>
   </div>
@@ -37,28 +61,25 @@
                       <tr>
 
                           <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                              RUC Cliente
-                          </th>
-                          <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                              RUM
-                          </th>
-                          <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                              Local
+                              RUC
                           </th>
                           <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                               Número de Factura
                           </th>
                           <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                              Descripción
+                              Nombre de Cliente
                           </th>
                           <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                              Fecha de Emision
+                              Local
+                          </th>
+                          <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                              Descripción del concepto
                           </th>
                           <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                               Total
                           </th>
                           <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                              Estado
+                              Fecha
                           </th>
                           <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                               Documento
@@ -71,19 +92,18 @@
                       <tr class="hover:bg-gray-100 dark:hover:bg-gray-700" *ngFor="let item of reportes">
 
                           <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400">
-                              <div class="text-base font-semibold text-gray-900 dark:text-white">{{item['DOCUMENT_1']['RUC_CLIENTE'] ?? '-'}}</div>
+                              <div class="text-base font-semibold text-gray-900 dark:text-white">{{item.client_ruc ?? '-'}}</div>
 
                           </td>
-                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item['DOCUMENT_1']['RUM'] ?? '-'}}</td>
-                          <td class="max-w-sm p-4 overflow-hidden text-base font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">{{ item['DOCUMENT_1']['LOCAL'] ?? '-'}}</td>
-                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item['DOCUMENT_1']['NUMERO_FACTURA'] ?? '-'}}</td>
-                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item['DOCUMENT_1']['DETALLE_FACTURA'][0]['DESCRIPCION'] ?? '-'}}</td>
-                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item['DOCUMENT_1']['FECHA_EMISION'] ??'-'}}</td>
-                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item['DOCUMENT_1']['TOTAL_FACTURA'] ??'-'}}</td>
+                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item.document_number ?? '-'}}</td>
+                          <td class="max-w-sm p-4 overflow-hidden text-base font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">{{ item.client_name ?? '-'}}</td>
+                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item.document_location ?? '-'}}</td>
+                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item.item_description ??'-'}}</td>
+                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ (item.item_total | number:'1.2-2' ) ??'-'}}</td>
 
-                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item['DOCUMENT_1']['ESTADO_DOCUMENTO'] ??'-'}}</td>
+                          <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ item.document_issue_date  ??'-'}}</td>
                           <td class="p-4 space-x-2 whitespace-nowrap">
-                              <button (click)="verDocumento(item['DOCUMENT_ID'] ?? '-')" type="button" id="updateProductButton" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                              <button (click)="verDocumento(item.document_id ?? '-')" type="button" id="updateProductButton" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
 <!--                                   <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
  -->                                  Ver Documento
                               </button>
@@ -107,15 +127,15 @@
       </a>
       <a href="#" class="inline-flex justify-center p-1 mr-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
           <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-      </a>
-      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span class="font-semibold text-gray-900 dark:text-white">1-20</span> of <span class="font-semibold text-gray-900 dark:text-white">2290</span></span> -->
+      </a> -->
+      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span class="font-semibold text-gray-900 dark:text-white">{{paginacion.from}} - {{paginacion.to}}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{paginacion.total}}</span></span>
   </div>
   <div class="flex items-center space-x-3">
-      <a (click)="listarReportes(this.previusKey)" *ngIf="boolPrevius" class="inline-flex items-center justify-center flex-1 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+      <a (click)="listarReportes(paginacion.previous_page)" *ngIf="paginacion.previous_page != null" class="inline-flex items-center justify-center flex-1 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
           <svg class="w-5 h-5 mr-1 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
           Anterior
       </a>
-      <a (click)="listarReportes(this.nextKey)"  *ngIf="boolNext" class="inline-flex items-center justify-center flex-1 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+      <a (click)="listarReportes(paginacion.next_page)"  *ngIf="paginacion.next_page" class="inline-flex items-center justify-center flex-1 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
           Siguiente
           <svg class="w-5 h-5 ml-1 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
       </a>

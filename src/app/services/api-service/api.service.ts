@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class ApiService {
 
-  private base_url: string = 'https://apdayc-doc-query.atiendo.pe/api/';//'http://127.0.0.1:9000/api/';
+  private base_url: string = 'http://127.0.0.1:8000/api/';//'https://apdayc-doc-query.atiendo.pe/api/';//
 
   constructor(private http: HttpClient) { }
 
