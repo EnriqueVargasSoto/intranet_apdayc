@@ -280,44 +280,33 @@ export class DashboardComponent {
     };
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
-    this.inicializaTabs();
-    this.listarReportes();
-    this.cantidadDocumentosProcesados();
-    this.documentosMasEmitidos();
-    this.totalTiposDocumentos();
-    this.leyendaParaGraficoCirculo();
-    this.llenarGraficoDona();
+    //this.loading = true
+   this.inicializaTabs();
+   this.listarReportes(1);
+   this.cantidadDocumentosProcesados();
+   this.documentosMasEmitidos();
+   this.totalTiposDocumentos();
+   this.leyendaParaGraficoCirculo();
+   this.llenarGraficoDona();
+    //this.loading = false;
   }
 
-  listarReportes(accion?: string){
-    this.loading = true
-    let url = 'reports';
-    console.log(accion);
-    if (accion != undefined) {
-      url = url+'?lastEvaluatedKey[DOCUMENT_ID][S]='+accion;
-    }
-    console.log(this.search);
-    if (this.search != '') {
-      url = url+'?searchTerm='+this.search;
-    }
+  async listarReportes(page?: number){
 
-    console.log('url', url)
-    this.apiService.consulta(url,'get').then((resp) => {
+    let url = 'athena/data?page='+page+'&limit=5';
+
+    await this.apiService.consulta(url,'get').subscribe((resp) => {
       console.log(resp);
-      this.reportes = resp['data']['items'];
-      this.boolPrevius = resp['data']['hasPreviousPage'];
-      this.boolNext = resp['data']['hasNextPage'];
-      if(resp['data']['nextEvaluatedKey'] != null){
-        this.nextKey = resp['data']['nextEvaluatedKey']['DOCUMENT_ID']['S']
-      }
-      if(resp['data']['previousEvaluatedKey'] != null){
-        this.nextKey = resp['data']['previousEvaluatedKey']['DOCUMENT_ID']['S']
-      }
+      this.reportes = resp['data'];
+      //this.paginacion = resp['pagination'];
+
+
+
     });
-    this.loading = false;
+
   }
 
   verDocumento(documentoId: string){
@@ -346,7 +335,7 @@ export class DashboardComponent {
       query : "SELECT COUNT(*) AS total_documents FROM documents",
     };
 
-    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+    this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any) => {
       console.log('total: ',resp[0][0]);
       this.totalDocumentosProcesados = resp[0][0];
     });
@@ -371,22 +360,22 @@ export class DashboardComponent {
 
     const tabs: TabsInterface = new Tabs(tabsElement, tabElements);
 
-    tabs.show('faq');
+    tabs.show('about');
 
     const query = {
-      query : "SELECT item_codigo, item_detalle, COUNT(item_codigo) AS item_count FROM documents GROUP BY item_codigo, item_detalle ORDER BY item_count DESC LIMIT 5",
+      query : "SELECT item_code, item_description, COUNT(item_code) AS item_count FROM documents WHERE status='SUCCESS' GROUP BY item_code, item_description ORDER BY item_count DESC LIMIT 5;",
     };
 
-    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+    this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any) => {
       console.log('total: ',resp);
       this.topsConceptos = resp;
     });
 
     const query1 = {
-      query : "SELECT ruc_cliente, usuario, COUNT(*) AS numero_facturas FROM documents GROUP BY ruc_cliente, usuario ORDER BY numero_facturas DESC LIMIT 5;",
+      query : "SELECT client_ruc, client_name, COUNT(*) AS numero_facturas FROM documents WHERE status='SUCCESS' GROUP BY client_ruc, client_name ORDER BY numero_facturas DESC LIMIT 5;",
     };
 
-    this.apiService.consulta('consulta-athena','post',query1).then((resp: any) => {
+    this.apiService.consulta('consulta-athena','post',query1).subscribe((resp: any) => {
       console.log('total: ',resp);
       this.topsClientes = resp;
     });
@@ -394,10 +383,10 @@ export class DashboardComponent {
 
   documentosMasEmitidos(){
     const query = {
-      query : "SELECT tipo_de_documento, COUNT(*) AS cantidad FROM documents GROUP BY tipo_de_documento ORDER BY cantidad DESC LIMIT 4;",
+      query : "SELECT document_type, COUNT(*) AS cantidad FROM documents WHERE status='SUCCESS' GROUP BY document_type ORDER BY cantidad DESC LIMIT 4;",
     };
 
-    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+    this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any) => {
       console.log('total: ',resp);
       this.documentosMasEmitidosList = resp;
     });
@@ -405,10 +394,10 @@ export class DashboardComponent {
 
   totalTiposDocumentos(){
     const query = {
-      query : "SELECT COUNT(DISTINCT tipo_de_documento) AS total_tipos_documentos FROM documents;",
+      query : "SELECT COUNT(DISTINCT document_type) AS total_tipos_documentos FROM documents WHERE status='SUCCESS';",
     };
 
-    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+    this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any) => {
       console.log('total: ',resp[0][0]);
       this.totalDocumentos = resp[0][0];
     });
@@ -416,10 +405,10 @@ export class DashboardComponent {
 
   leyendaParaGraficoCirculo(){
     const query = {
-      query : "SELECT tipo_de_documento, COUNT(*) AS cantidad FROM documents GROUP BY tipo_de_documento ORDER BY cantidad DESC LIMIT 3;",
+      query : "SELECT document_type, COUNT(*) AS cantidad FROM documents WHERE status='SUCCESS' GROUP BY document_type ORDER BY cantidad DESC LIMIT 3;",
     };
 
-    this.apiService.consulta('consulta-athena','post',query).then((resp: any) => {
+    this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any) => {
       console.log('total: ',resp);
       this.leyendaGraficoCirculo = resp;
     });
@@ -427,10 +416,10 @@ export class DashboardComponent {
 
   llenarGraficoDona(){
     const query = {
-      query : "SELECT tipo_de_documento, COUNT(*) AS cantidad FROM documents GROUP BY tipo_de_documento ORDER BY cantidad DESC;",
+      query : "SELECT document_type, COUNT(*) AS cantidad FROM documents WHERE status='SUCCESS' GROUP BY document_type ORDER BY cantidad DESC;",
     };
 
-    this.apiService.consulta('consulta-athena','post',query).then((resp: any[]) => {
+    this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any[]) => {
       console.log('total: ',resp);
       resp.forEach(element => {
         this.labelsDonus.push(element[0]);

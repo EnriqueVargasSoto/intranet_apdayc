@@ -1,35 +1,36 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private base_url: string = 'http://127.0.0.1:8000/api/';//'https://apdayc-doc-query.atiendo.pe/api/';//
+  private base_url: string = 'https://apdayc-doc-query.atiendo.pe/api/';//'http://127.0.0.1:9000/api/';//
 
   constructor(private http: HttpClient) { }
 
-  async consulta(url: String,method: String,body?: any): Promise<any> {
+  consulta(url: String,method: String,body?: any): Observable<any> {
     switch (method) {
       case 'get':
-        return await this.http.get(this.base_url+url).toPromise();
+        return this.http.get(this.base_url+url);
         break;
 
       case 'post':
-        return await this.http.post(this.base_url+url, body).toPromise();
+        return this.http.post(this.base_url+url, body);
         break;
 
       case 'patch':
-        return await this.http.patch(this.base_url+url, body).toPromise();
+        return this.http.patch(this.base_url+url, body);
         break;
 
       case 'delete':
-        return await this.http.delete(this.base_url+url).toPromise();
+        return this.http.delete(this.base_url+url);
         break;
 
       default:
-        return await this.http.get(this.base_url+url).toPromise();
+        return this.http.get(this.base_url+url);
         break;
     }
   }

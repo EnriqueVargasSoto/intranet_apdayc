@@ -24,7 +24,8 @@
       "dom"
     ],
     "typeRoots": ["node_modules/@types"],
-    "types": ["leaflet"]
+    "types": ["leaflet"],
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
