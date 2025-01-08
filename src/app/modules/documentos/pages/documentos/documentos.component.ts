@@ -1,7 +1,18 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Drawer } from 'flowbite';
 import { ApiService } from 'src/app/services/api-service/api.service';
 import { IndexDbService } from 'src/app/services/index-db/index-db.service';
+
+interface Message {
+  sender: 'user' | 'bot';
+  text: string;
+}
+
+interface Conversation {
+  name: string;
+  messages: Message[];
+}
 
 @Component({
   selector: 'app-documentos',
@@ -38,7 +49,24 @@ export class DocumentosComponent {
 
   filtro: string = '';
 
-  constructor(private apiService: ApiService, private http: HttpClient, private indexDbService: IndexDbService){}
+  conversations: Conversation[] = [
+    { name: 'Conversación 1', messages: [{ sender: 'bot', text: 'Hola, ¿cómo puedo ayudarte?' }] },
+    { name: 'Conversación', messages: [{ sender: 'bot', text: '¿Tienes alguna consulta?' }] },
+  ];
+  selectedConversation: Conversation | null = null;
+
+  messageText: string = '';
+
+  URL_CHAT: string = 'https://ieyy73j919.execute-api.us-east-2.amazonaws.com/chatbot-api';
+
+  showToast = false;
+
+  documento: any = {};
+
+
+  constructor(private apiService: ApiService, private http: HttpClient, private indexDbService: IndexDbService){
+    this.selectConversation({ name: 'Conversación', messages: [{ sender: 'bot', text: '¿Tienes alguna consulta?' }] })
+  }
 
   async ngOnInit() {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -95,7 +123,15 @@ export class DocumentosComponent {
     if (this.query.length > 2) {  // Asegúrate de tener al menos 3 caracteres antes de hacer la búsqueda
 
       try {
-        this.filteredOptions = await this.indexDbService.searchRecords(this.query, 'client_ruc');
+        const data ={
+          column_json: "client_ruc",
+          searchString: this.query
+        }
+
+        this.apiService.consulta('json-client-search', 'post', data).subscribe((resp) => {
+          this.filteredOptions = resp;
+        });
+        /* this.filteredOptions = await this.indexDbService.searchRecords(this.query, 'client_ruc'); */
 
       } catch (error) {
         console.error('Error al cargar los datos: ', error);
@@ -115,7 +151,17 @@ export class DocumentosComponent {
     if (this.queryName.length > 2) {  // Asegúrate de tener al menos 3 caracteres antes de hacer la búsqueda
 
       try {
-        this.filteredOptionsName = await this.indexDbService.searchRecords(this.queryName, 'client_name');
+
+        const data ={
+          column_json: "client_name",
+          searchString: this.queryName
+        }
+
+        this.apiService.consulta('json-client-search', 'post', data).subscribe((resp) => {
+          this.filteredOptionsName = resp;
+        });
+
+        /* this.filteredOptionsName = await this.indexDbService.searchRecords(this.queryName, 'client_name'); */
         console.log(this.filteredOptionsName.length)
 
       } catch (error) {
@@ -136,7 +182,15 @@ export class DocumentosComponent {
     if (this.queryLocation.length > 2) {  // Asegúrate de tener al menos 3 caracteres antes de hacer la búsqueda
 
       try {
-        this.filteredOptionsLocation = await this.indexDbService.searchRecords(this.queryLocation, 'document_location');
+        const data ={
+          column_json: "document_location",
+          searchString: this.queryLocation
+        }
+
+        this.apiService.consulta('json-client-search', 'post', data).subscribe((resp) => {
+          this.filteredOptionsLocation = resp;
+        });
+        /* this.filteredOptionsLocation = await this.indexDbService.searchRecords(this.queryLocation, 'document_location'); */
         console.log(this.filteredOptionsLocation.length)
 
       } catch (error) {
@@ -152,4 +206,132 @@ export class DocumentosComponent {
     this.listarReportes(1);
   }
 
+  // Esta función se ejecuta cuando el input pierde el foco
+  onBlur() {
+    setTimeout(() => {
+      this.filteredOptionsName = []; // Oculta las opciones al perder el foco
+    }, 200); // Retraso para que el click en el <li> se pueda detectar antes de ocultar
+  }
+
+  openDrawer(documento: any){
+    const $targetEl = document.getElementById('drawer-update-product-default');
+
+    // options with default values
+    const options = {
+      placement: 'right',
+      backdrop: true,
+      bodyScrolling: false,
+      edge: false,
+      edgeOffset: '',
+      backdropClasses:
+          'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-30',
+      onHide: () => {
+          console.log('drawer is hidden');
+      },
+      onShow: () => {
+          console.log('drawer is shown');
+      },
+      onToggle: () => {
+          console.log('drawer has been toggled');
+      },
+    };
+
+    // instance options object
+    const instanceOptions = {
+      id: 'drawer-js-example',
+      override: true
+    };
+
+    const drawer = new Drawer($targetEl, options, instanceOptions);
+    this.documento = documento;
+    // show the drawer
+    drawer.show();
+
+  }
+
+  closeDrawer(){
+    const $targetEl = document.getElementById('drawer-update-product-default');
+
+    // options with default values
+    const options = {
+      placement: 'right',
+      backdrop: true,
+      bodyScrolling: false,
+      edge: false,
+      edgeOffset: '',
+      backdropClasses:
+          'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-30',
+      onHide: () => {
+          console.log('drawer is hidden');
+      },
+      onShow: () => {
+          console.log('drawer is shown');
+      },
+      onToggle: () => {
+          console.log('drawer has been toggled');
+      },
+    };
+
+    // instance options object
+    const instanceOptions = {
+      id: 'drawer-js-example',
+      override: true
+    };
+
+    const drawer = new Drawer($targetEl, options, instanceOptions);
+
+    this.documento = {};
+    // show the drawer
+    drawer.hide();
+
+  }
+
+  selectConversation(conversation: Conversation) {
+    this.selectedConversation = conversation;
+  }
+
+  sendMessage() {
+    if (!this.messageText.trim() || !this.selectedConversation) return;
+
+    this.selectedConversation.messages.push({ sender: 'user', text: this.messageText });
+    const body = {
+      prompt: this.messageText
+    };
+
+    this.messageText = '';
+
+    this.http.post(this.URL_CHAT, body, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        //'Authorization': `Bearer ${token}`
+      })}).subscribe((resp: any) => {
+      this.selectedConversation?.messages.push({
+        sender: 'bot',
+        text: resp.response//'Gracias por tu mensaje. Estoy aquí para ayudarte.',
+      });
+    });
+
+
+
+    // Simulate bot response
+    /* setTimeout(() => {
+      this.selectedConversation?.messages.push({
+        sender: 'bot',
+        text: 'Gracias por tu mensaje. Estoy aquí para ayudarte.',
+      });
+    }, 1000); */
+  }
+
+  copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        //alert('Texto copiado al portapapeles: ' + text); // Opcional: Notificación
+        this.showToast = true;
+        setTimeout(() => (this.showToast = false), 3000);
+      },
+      (err) => {
+        console.error('Error al copiar texto: ', err);
+      }
+    );
+  }
 }

@@ -145,6 +145,7 @@ export class DashboardComponent {
     colors: string[];
     xaxis: ApexXAxis;
     yaxis: ApexYAxis;
+    tooltip?: ApexTooltip;
   };
 
   // Configuración para el gráfico de barras (Users)
@@ -155,6 +156,7 @@ export class DashboardComponent {
     colors: string[];
     xaxis: ApexXAxis;
     yaxis: ApexYAxis;
+    tooltip?: ApexTooltip;
   };
 
   @ViewChild("chart") chart!: ChartComponent;
@@ -185,10 +187,13 @@ export class DashboardComponent {
       },
       colors: ["#1E3A8A"], // Azul
       xaxis: {
-        categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       },
       yaxis: {
         show: false
+      },
+      tooltip: {
+        enabled: false // Deshabilitar el tooltip
       }
     };
 
@@ -217,6 +222,9 @@ export class DashboardComponent {
       },
       yaxis: {
         show: false
+      },
+      tooltip: {
+        enabled: false // Deshabilitar el tooltip
       }
     };
 

@@ -39,7 +39,7 @@ export class LoginComponent {
       }
       this.authService.login(data);
 
-      await this.loadItemsFromApi();
+      /* await this.loadItemsFromApi(); */
       this.loading = false;
       this.router.navigate(['/dashboard']);
 
