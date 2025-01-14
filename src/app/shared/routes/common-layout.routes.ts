@@ -17,6 +17,9 @@ export const CommonLayout_ROUTES: Routes = [
     path: 'chat',
     loadChildren: () => import('../../modules/chat/chat.module').then(m => m.ChatModule)
   },
-
+  {
+    path: 'sincronizar',
+    loadChildren: () => import('../../modules/sincronizar/sincronizar.module').then(m => m.SincronizarModule)
+  }
 
 ];
