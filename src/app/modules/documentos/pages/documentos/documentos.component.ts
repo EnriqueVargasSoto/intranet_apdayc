@@ -47,6 +47,9 @@ export class DocumentosComponent {
   queryLocation: string = '';
   filteredOptionsLocation: any[] = [];
 
+  queryNumber: string = '';
+  filteredOptionsNumber: any[] = [];
+
   filtro: string = '';
 
   conversations: Conversation[] = [
@@ -90,6 +93,10 @@ export class DocumentosComponent {
 
     if (this.filtro == 'document_location') {
       query = this.queryLocation
+    }
+
+    if (this.filtro == 'document_number') {
+      query = this.queryNumber
     }
 
     if(this.filtro !== '' && query !== ''){
@@ -203,6 +210,35 @@ export class DocumentosComponent {
     this.queryLocation = option.document_location;
     this.filteredOptionsLocation = [];
     this.filtro = 'document_location';
+    this.listarReportes(1);
+  }
+
+  async filterOptionsNumber() {
+
+    if (this.queryNumber.length > 2) {  // Asegúrate de tener al menos 3 caracteres antes de hacer la búsqueda
+
+      try {
+        const data ={
+          column_json: "document_number",
+          searchString: this.queryNumber
+        }
+
+        this.apiService.consulta('json-client-search', 'post', data).subscribe((resp) => {
+          this.filteredOptionsNumber = resp;
+        });
+        /* this.filteredOptionsLocation = await this.indexDbService.searchRecords(this.queryLocation, 'document_location'); */
+        console.log(this.filteredOptionsNumber.length)
+
+      } catch (error) {
+        console.error('Error al cargar los datos: ', error);
+      }
+    }
+  }
+
+  selectOptionNumber(option: any) {
+    this.queryNumber = option.document_number;
+    this.filteredOptionsNumber = [];
+    this.filtro = 'document_number';
     this.listarReportes(1);
   }
 
