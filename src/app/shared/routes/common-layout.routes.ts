@@ -14,6 +14,10 @@ export const CommonLayout_ROUTES: Routes = [
     loadChildren: () => import('../../modules/documentos/documentos.module').then(m => m.DocumentosModule)
   },
   {
+    path: 'documentos-failed',
+    loadChildren: () => import('../../modules/documentos-faild/documentos-faild.module').then(m => m.DocumentosFaildModule)
+  },
+  {
     path: 'chat',
     loadChildren: () => import('../../modules/chat/chat.module').then(m => m.ChatModule)
   },

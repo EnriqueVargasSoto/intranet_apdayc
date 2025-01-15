@@ -15,11 +15,11 @@ interface Conversation {
 }
 
 @Component({
-  selector: 'app-documentos',
-  templateUrl: './documentos.component.html',
-  styleUrls: ['./documentos.component.scss']
+  selector: 'app-documentos-faild',
+  templateUrl: './documentos-faild.component.html',
+  styleUrls: ['./documentos-faild.component.scss']
 })
-export class DocumentosComponent {
+export class DocumentosFaildComponent {
 
   cabeceras: string[] = ['RUC Cliente', ]
   reportes: any[] = [];
@@ -66,7 +66,6 @@ export class DocumentosComponent {
 
   documento: any = {};
 
-
   constructor(private apiService: ApiService, private http: HttpClient, private indexDbService: IndexDbService){
     this.selectConversation({ name: 'Conversación', messages: [{ sender: 'bot', text: '¿Tienes alguna consulta?' }] })
   }
@@ -81,7 +80,7 @@ export class DocumentosComponent {
 
   async listarReportes(page?: number){
     this.loading = true
-    let url = 'athena/data?page='+page+'&limit='+this.limit+'&status=SUCCESS';
+    let url = 'athena/data?page='+page+'&limit='+this.limit+'&status=FAILED';
     let query = '';
     if (this.filtro == 'client_ruc') {
       query = this.query
