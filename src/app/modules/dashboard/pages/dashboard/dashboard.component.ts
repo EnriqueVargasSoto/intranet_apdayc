@@ -64,6 +64,8 @@ export class DashboardComponent {
   loading: boolean = false;
 
   totalDocumentosProcesados = 0;
+  totalDocumentosConformes = 0;
+  totalDocumentosObservados = 0;
 
   topsConceptos: any[] = [];
 
@@ -292,11 +294,14 @@ export class DashboardComponent {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     //this.loading = true
-   this.inicializaTabs();
+
    this.listarReportes(1);
    this.cantidadDocumentosProcesados();
-   this.documentosMasEmitidos();
-   this.totalTiposDocumentos();
+   this.documentosConformes();
+   this.documentosObservados();
+
+   this.inicializaTabs();
+
    this.leyendaParaGraficoCirculo();
    this.llenarGraficoDona();
     //this.loading = false;
@@ -304,10 +309,10 @@ export class DashboardComponent {
 
   async listarReportes(page?: number){
 
-    let url = 'athena/data?page='+page+'&limit=5';
+    let url = 'athena/data?page='+page+'&limit=5&status=SUCCESS';
 
     await this.apiService.consulta(url,'get').subscribe((resp) => {
-      console.log(resp);
+      console.log('lo que me trae para listar: ',resp);
       this.reportes = resp['data'];
       //this.paginacion = resp['pagination'];
 
@@ -389,25 +394,25 @@ export class DashboardComponent {
     });
   }
 
-  documentosMasEmitidos(){
+  documentosObservados(){
     const query = {
-      query : "SELECT document_type, COUNT(*) AS cantidad FROM documents WHERE status='SUCCESS' GROUP BY document_type ORDER BY cantidad DESC LIMIT 4;",
+      query : "select count(*) from documents where status='FAILED';",
     };
 
     this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any) => {
       console.log('total: ',resp);
-      this.documentosMasEmitidosList = resp;
+      this.totalDocumentosObservados = resp[0][0];
     });
   }
 
-  totalTiposDocumentos(){
+  documentosConformes(){
     const query = {
-      query : "SELECT COUNT(DISTINCT document_type) AS total_tipos_documentos FROM documents WHERE status='SUCCESS';",
+      query : "select count(*) from documents where status='SUCCESS';",
     };
 
     this.apiService.consulta('consulta-athena','post',query).subscribe((resp: any) => {
       console.log('total: ',resp[0][0]);
-      this.totalDocumentos = resp[0][0];
+      this.totalDocumentosConformes = resp[0][0];
     });
   }
 

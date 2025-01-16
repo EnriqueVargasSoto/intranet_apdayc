@@ -37,6 +37,11 @@ export class LoginComponent {
       const data= {
         access_token: 'asd123'
       }
+      if (this.loginForm.value.vc_usuario === 'ADMIN' && this.loginForm.value.vc_clave === '123456') {
+        data.access_token = 'admin'
+
+      }
+
       this.authService.login(data);
 
       /* await this.loadItemsFromApi(); */

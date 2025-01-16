@@ -36,19 +36,7 @@
       </form>
       <ul class="space-y-2">
 
-        <li>
-          <a
-            [routerLink]="['/sincronizar']" routerLinkActive="router-link-active"
-            class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-          >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
-          </svg>
 
-
-            <span class="ml-3">Sincronizar</span>
-          </a>
-        </li>
 
         <li>
           <a
@@ -72,7 +60,7 @@
             <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
           </svg>
 
-            <span class="ml-3">Documentos Success</span>
+            <span class="ml-3">Documentos Conformes</span>
           </a>
         </li>
         <li>
@@ -84,7 +72,7 @@
             <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
           </svg>
 
-            <span class="ml-3">Documentos Failed</span>
+            <span class="ml-3">Documentos Observados</span>
           </a>
         </li>
         <li>
@@ -102,6 +90,20 @@
           </svg>
 
             <span class="ml-3">Chat</span>
+          </a>
+        </li>
+
+        <li *ngIf="token == 'admin'">
+          <a
+            [routerLink]="['/sincronizar']" routerLinkActive="router-link-active"
+            class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3"/>
+          </svg>
+
+
+            <span class="ml-3">Sincronizar</span>
           </a>
         </li>
 
